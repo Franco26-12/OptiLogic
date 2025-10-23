@@ -1,0 +1,32 @@
+
+.dashboard-layout {
+    display: flex;
+   
+}
+
+.main-content {
+   
+    margin-left: 250px; 
+    width: calc(100% - 250px); 
+    padding: 20px 30px;
+    min-height: 100vh;
+    background-color: #f8f9fa; 
+}
+
+
+.main-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.main-header h1 {
+    font-size: 2em;
+    color: #343a40;
+    margin: 0;
+}
+
+
+.dashboard-widgets {
+    
+}

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-OptilogicApplication<optilogic>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.franco.optilogic.OptilogicApplication",
+            "projectName": "optilogic",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 @DiscriminatorValue("ADMIN")
 public class Admin extends Usuario {
-    // No necesita atributos adicionales por ahora
+  
 }

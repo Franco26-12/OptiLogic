@@ -1,21 +1,11 @@
-package dtos; 
+package dtos;
 
-
-public class RegistroDTO {
-    
+// Usaremos un DTO simple para recibir los datos de login
+public class LoginDto {
     private String email;
     private String password;
-  
-    public RegistroDTO() {}
 
-    // Constructor con todos los campos
-    public RegistroDTO(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-
-    
+    // Getters y Setters
     public String getEmail() {
         return email;
     }

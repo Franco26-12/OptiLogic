@@ -1,25 +1,38 @@
 package com.franco.optilogic.Config;
 
-import com.franco.optilogic.Entity.Usuario;
-import com.franco.optilogic.Repository.UsuarioRepository;
+import com.franco.optilogic.Entity.Admin;
+import com.franco.optilogic.Repository.AdminRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Set;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final AdminRepository adminRepository;
 
-    public CustomUserDetailsService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public CustomUserDetailsService(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
     }
 
+    // Método principal: Carga los datos del usuario por email
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-        return new CustomUserDetails(usuario);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Buscar el Admin por email
+        Admin admin = adminRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+        
+        // Crear las autoridades (roles)
+        Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + admin.getRol()));
+        
+        // Retornar el objeto UserDetails que Spring Security necesita
+        return new User(admin.getEmail(), admin.getPassword(), authorities);
     }
 }

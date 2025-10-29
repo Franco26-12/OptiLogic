@@ -1,16 +1,32 @@
 package com.franco.optilogic.Entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 🚨 Generación automática de ID
     private Long id;
+
+    @Column(unique = true, nullable = false) // 🚨 Email es único y obligatorio
     private String email;
+
+    @Column(nullable = false) // 🚨 Password es obligatorio
     private String password;
+
+    @Column(nullable = false)
     private String rol;
+
+    // Constructor vacío (necesario para JPA)
+    public Usuario() {
+    }
 
     // Getters y setters
     public Long getId() { return id; }

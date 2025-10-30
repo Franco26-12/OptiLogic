@@ -1,7 +1,7 @@
 package com.franco.optilogic.Services;
 
-import com.franco.optilogic.Entity.Admin; // Asegúrate de que esta entidad sea la correcta
-import com.franco.optilogic.Repository.AdminRepository; // O la interfaz de tu repositorio
+import com.franco.optilogic.Entity.Usuario; 
+import com.franco.optilogic.Repository.UsuarioRepository; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,24 +9,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsuarioService {
 
-    // Cambia AdminRepository por el repositorio de tu entidad de usuario si es diferente
-    private final AdminRepository adminRepository; 
+    private final UsuarioRepository usuarioRepository; 
     private final PasswordEncoder passwordEncoder; 
 
     @Autowired
-    public UsuarioService(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-   
-    public Admin registrarUsuario(Admin admin, String rawPassword) {
+
+    public Usuario registrarUsuario(Usuario usuario, String rawPassword) {
  
         String hashedPassword = passwordEncoder.encode(rawPassword);
-        admin.setPassword(hashedPassword); 
+        usuario.setPassword(hashedPassword); 
         
+       
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+             throw new RuntimeException("El email ya está registrado.");
+        }
 
-        return adminRepository.save(admin);
+        return usuarioRepository.save(usuario);
     }
-
 }

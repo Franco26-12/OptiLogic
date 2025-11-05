@@ -15,10 +15,15 @@ public class Envio {
     private String direccionDestino;
     private String estado;
 
+    @Column(unique = true, nullable = false)
+    private String codigoQR;
+
     @Column(updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
     
     private LocalDateTime fechaConfirmacionCliente;
+    
+    private LocalDateTime fechaEntrega;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -99,6 +104,20 @@ public class Envio {
 	public void setProductos(List<Producto> productos) {
 		this.productos = productos;
 	}
-    
-    
+	
+	public String getCodigoQR() {
+		return codigoQR;
+	}
+	
+	public void setCodigoQR(String codigoQR) {
+		this.codigoQR = codigoQR;
+	}
+	
+	public LocalDateTime getFechaEntrega() {
+		return fechaEntrega;
+	}
+	
+	public void setFechaEntrega(LocalDateTime fechaEntrega) {
+		this.fechaEntrega = fechaEntrega;
+	}
 }

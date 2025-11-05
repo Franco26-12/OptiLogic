@@ -1,5 +1,6 @@
 package com.franco.optilogic.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,18 @@ public class Producto {
 
     private String nombre;
     private String descripcion;
+    
+    @Column(nullable = false)
+    private Integer stockDisponible = 0;
+    
+    @Column(nullable = false)
+    private Integer stockMinimo = 0;
+    
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
 	public Long getId() {
 		return id;
 	}
@@ -39,6 +52,28 @@ public class Producto {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-    
-    
+	
+	public Integer getStockDisponible() {
+		return stockDisponible;
+	}
+	
+	public void setStockDisponible(Integer stockDisponible) {
+		this.stockDisponible = stockDisponible;
+	}
+	
+	public Integer getStockMinimo() {
+		return stockMinimo;
+	}
+	
+	public void setStockMinimo(Integer stockMinimo) {
+		this.stockMinimo = stockMinimo;
+	}
+	
+	public Categoria getCategoria() {
+		return categoria;
+	}
+	
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
 }

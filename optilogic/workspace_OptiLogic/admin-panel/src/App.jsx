@@ -1,42 +1,42 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'; // 🚨 Nota: Usar 'react-router-dom', no solo 'react-router'
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Importa tus componentes de página
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Productos from './pages/Productos.jsx';
 import Registro from './pages/Registro.jsx';
+import Categoria from './pages/Categoria.jsx';
+import AdminLayout from './components/AdminLayout.jsx';
 
-function PrivateRoute({children}) {
+function PrivateRoute({ children }) {
   const token = localStorage.getItem('token');
-  // Aquí puedes agregar la lógica para verificar el rol (userRole === 'ADMIN')
-  return token ? children : <Navigate to="/login" />; 
+  return token ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {
   return (
-    // 🚨 Falta <BrowserRouter> en el bloque de código que me enviaste. 
-    // Si lo tienes en tu main.jsx, está bien. Si no, debe ir aquí.
     <Routes>
-      
-      {/* 1. RUTAS PÚBLICAS (Deben ir al principio) */}
+      {/* Rutas públicas */}
       <Route path="/registro" element={<Registro />} />
       <Route path="/login" element={<Login />} />
-      
-      {/* RUTA DE INICIO: Cuando la URL es solo '/'. Redirige a /registro */}
-      <Route path="/" element={<Navigate to="/registro" replace />} />
 
-      {/* 2. RUTAS PROTEGIDAS */}
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      
-      {/* NOTA: Productos NO debe ser pública si está en el Dashboard */}
-      <Route path="/productos" element={<PrivateRoute><Productos /></PrivateRoute>} />
-      
-      {/* 3. RUTA COMODÍN: Si la URL no coincide con ninguna anterior, redirige a /login */}
+      {/* Rutas protegidas con layout admin */}
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <AdminLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="productos" element={<Productos />} />
+        <Route path="categorias" element={<Categoria />} />
+      </Route>
+
+      {/* Ruta comodín */}
       <Route path="*" element={<Navigate to="/login" replace />} />
-
     </Routes>
-    
-    // 🚨 Si <BrowserRouter> no está en main.jsx, envuelve <Routes> con <BrowserRouter>
   );
 }

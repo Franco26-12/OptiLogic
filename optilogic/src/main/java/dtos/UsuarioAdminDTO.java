@@ -1,23 +1,35 @@
-package dtos; 
+package dtos;
 
+public class UsuarioAdminDTO {
 
-public class RegistroDTO {
-    
+    private Long id;
     private String nombre;
     private String apellido;
     private String cedula;
     private String email;
-    private String password;
-  
-    public RegistroDTO() {}
+    private String rol;
+    private String estado;
 
-    // Constructor con todos los campos
-    public RegistroDTO(String nombre, String apellido, String cedula, String email, String password) {
+    public UsuarioAdminDTO() {
+    }
+
+    public UsuarioAdminDTO(Long id, String nombre, String apellido, String cedula,
+                           String email, String rol, String estado) {
+        this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.cedula = cedula;
         this.email = email;
-        this.password = password;
+        this.rol = rol;
+        this.estado = estado;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -43,7 +55,7 @@ public class RegistroDTO {
     public void setCedula(String cedula) {
         this.cedula = cedula;
     }
-    
+
     public String getEmail() {
         return email;
     }
@@ -52,11 +64,19 @@ public class RegistroDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getRol() {
+        return rol;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

@@ -14,8 +14,23 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public List<Producto> obtenerTodosLosProductos() { return productoRepository.findAll(); }
-    public Optional<Producto> obtenerProductoPorId(Long id) { return productoRepository.findById(id); }
-    public Producto guardarProducto(Producto producto) { return productoRepository.save(producto); }
-    public void eliminarProducto(Long id) { productoRepository.deleteById(id); }
+    public List<Producto> obtenerTodosLosProductos() { 
+        return productoRepository.findAll(); 
+    }
+    
+    public Optional<Producto> obtenerProductoPorId(Long id) { 
+        return productoRepository.findById(id); 
+    }
+    
+    public Producto guardarProducto(Producto producto) { 
+        return productoRepository.save(producto); 
+    }
+    
+    public void eliminarProducto(Long id) { 
+        productoRepository.deleteById(id); 
+    }
+    
+    public List<Producto> obtenerProductosConStockBajo() {
+        return productoRepository.findProductosConStockBajo();
+    }
 }

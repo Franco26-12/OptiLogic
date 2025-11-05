@@ -5,6 +5,9 @@ import '../App.css'; // Importamos estilos
 // import { registrar } from '../services'; 
 
 export default function Registro() {
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [cedula, setCedula] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -19,7 +22,7 @@ export default function Registro() {
     setError(null);
     setMessage(null);
 
-    const usuario = { email, password, rol };
+    const usuario = { nombre, apellido, cedula, email, password, rol };
     
     // 🚨 CORRECCIÓN: Usar API_URL y endpoint real del backend 🚨
     const REGISTER_URL = 'http://localhost:8080/api/auth/register'; 
@@ -56,10 +59,37 @@ export default function Registro() {
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Registro de Administrador</h2>
         
+        <label>Nombre:</label>
+        <input 
+          type="text" 
+          placeholder="Nombre"
+          value={nombre} 
+          onChange={e => setNombre(e.target.value)} 
+          required 
+        />
+
+        <label>Apellido:</label>
+        <input 
+          type="text" 
+          placeholder="Apellido"
+          value={apellido} 
+          onChange={e => setApellido(e.target.value)} 
+          required 
+        />
+
+        <label>Cédula:</label>
+        <input 
+          type="text" 
+          placeholder="Cédula de Identidad"
+          value={cedula} 
+          onChange={e => setCedula(e.target.value)} 
+          required 
+        />
+        
         <label>Email:</label>
         <input 
           type="email" 
-          placeholder="Correo"
+          placeholder="Correo Electrónico"
           value={email} 
           onChange={e => setEmail(e.target.value)} 
           required 

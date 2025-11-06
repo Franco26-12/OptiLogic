@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Productos from './pages/Productos.jsx';
 import Registro from './pages/Registro.jsx';
 import Categoria from './pages/Categoria.jsx';
+import Envios from './pages/Envios.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 
 function PrivateRoute({ children }) {
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="productos" element={<Productos />} />
         <Route path="categorias" element={<Categoria />} />
+        <Route path="envios" element={<Envios />} />
       </Route>
 
       {/* Ruta comodín */}

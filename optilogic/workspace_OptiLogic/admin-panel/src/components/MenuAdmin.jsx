@@ -23,7 +23,10 @@ export default function MenuAdmin() {
                     <li>
                         <Link to="/categorias" className="nav-item">Categorías</Link>
                     </li>
-                    {/* Añadirás más links aquí (Envios, Clientes, Repartidores) */}
+                    <li>
+                        <Link to="/envios" className="nav-item">Envíos</Link>
+                    </li>
+                    {/* Añadirás más links aquí (Clientes, Repartidores) */}
                 </ul>
             </nav>
             <div className="sidebar-footer">

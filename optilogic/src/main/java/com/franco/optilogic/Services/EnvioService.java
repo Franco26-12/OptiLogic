@@ -12,28 +12,36 @@ import com.franco.optilogic.Entity.Producto;
 import com.franco.optilogic.Entity.Repartidor;
 import com.franco.optilogic.Repository.EnvioRepository;
 import com.franco.optilogic.Repository.ProductoRepository;
+import com.franco.optilogic.Repository.RepartidorRepository;
 import com.franco.optilogic.Repository.UsuarioRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Objects;
 
 @Service
 public class EnvioService {
     @Autowired private EnvioRepository envioRepository;
     @Autowired private UsuarioRepository usuarioRepository;
     @Autowired private ProductoRepository productoRepository;
+    @Autowired private RepartidorRepository repartidorRepository;
 
     public List<Envio> obtenerTodosLosEnvios() { return envioRepository.findAll(); }
-    public Optional<Envio> obtenerEnvioPorId(Long id) { return envioRepository.findById(id); }
+    public Optional<Envio> obtenerEnvioPorId(Long id) {
+        Long idSeguro = Objects.requireNonNull(id, "El id del envío es obligatorio");
+        return envioRepository.findById(idSeguro);
+    }
     
     public List<Envio> obtenerEnviosPendientes() {
         return envioRepository.findByRepartidorIsNull();
     }
     
     public List<Envio> obtenerEnviosPorRepartidor(Long repartidorId) {
-        Repartidor repartidor = (Repartidor) usuarioRepository.findById(repartidorId)
+        Long idSeguro = Objects.requireNonNull(repartidorId, "El id del repartidor es obligatorio");
+        Repartidor repartidor = (Repartidor) usuarioRepository.findById(idSeguro)
             .orElseThrow(() -> new RuntimeException("Repartidor no encontrado"));
         return envioRepository.findByRepartidor(repartidor);
     }
@@ -46,8 +54,13 @@ public class EnvioService {
     public Envio crearEnvio(CrearEnvioDTO dto) {
         Cliente cliente = (Cliente) usuarioRepository.findById(dto.getClienteId())
             .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        List<Producto> productos = productoRepository.findAllById(dto.getProductoIds());
-        if (productos.size() != dto.getProductoIds().size()) { 
+        List<Long> productoIds = Optional.ofNullable(dto.getProductoIds())
+            .filter(list -> !list.isEmpty())
+            .map(ArrayList::new)
+            .orElseThrow(() -> new RuntimeException("Debe seleccionar al menos un producto"));
+
+        List<Producto> productos = productoRepository.findAllById(productoIds);
+        if (productos.size() != productoIds.size()) { 
             throw new RuntimeException("Uno o más productos no fueron encontrados"); 
         }
 
@@ -57,6 +70,22 @@ public class EnvioService {
         nuevoEnvio.setDireccionDestino(dto.getDireccionDestino());
         nuevoEnvio.setEstado("PENDIENTE");
         nuevoEnvio.setCodigoQR(generarCodigoQR());
+
+        Long repartidorId = dto.getRepartidorId();
+        if (repartidorId != null) {
+            Long idSeguro = Objects.requireNonNull(repartidorId);
+            Repartidor repartidor = (Repartidor) usuarioRepository.findById(idSeguro)
+                .orElseThrow(() -> new RuntimeException("Repartidor no encontrado"));
+
+            if (!"DISPONIBLE".equals(repartidor.getEstado())) {
+                throw new RuntimeException("El repartidor no está disponible");
+            }
+
+            nuevoEnvio.setRepartidor(repartidor);
+            nuevoEnvio.setEstado("EN_TRANSITO");
+            repartidor.setEstado("OCUPADO");
+            usuarioRepository.save(repartidor);
+        }
 
         return envioRepository.save(nuevoEnvio);
     }
@@ -100,5 +129,9 @@ public class EnvioService {
         }
         
         return envioRepository.save(envio);
+    }
+
+    public List<Repartidor> obtenerRepartidoresDisponibles() {
+        return repartidorRepository.findByEstado("DISPONIBLE");
     }
 }

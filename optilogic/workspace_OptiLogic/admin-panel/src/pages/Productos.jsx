@@ -17,6 +17,8 @@ const initialFormState = {
   categoriaId: '',
 };
 
+const FORM_STORAGE_KEY = 'productosFormDraft';
+
 export default function Productos() {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -46,6 +48,17 @@ export default function Productos() {
   };
 
   useEffect(() => {
+    const storedForm = localStorage.getItem(FORM_STORAGE_KEY);
+    if (storedForm) {
+      try {
+        const parsed = JSON.parse(storedForm);
+        setForm((prev) => ({ ...prev, ...parsed }));
+      } catch (storageError) {
+        console.warn('No se pudo restaurar el formulario de productos:', storageError);
+        localStorage.removeItem(FORM_STORAGE_KEY);
+      }
+    }
+
     const fetchData = async () => {
       setLoading(true);
       await Promise.all([cargarProductos(), cargarCategorias()]);
@@ -55,9 +68,14 @@ export default function Productos() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(form));
+  }, [form]);
+
   const resetForm = () => {
     setForm(initialFormState);
     setSaving(false);
+    localStorage.removeItem(FORM_STORAGE_KEY);
   };
 
   const handleChange = (e) => {
@@ -95,7 +113,12 @@ export default function Productos() {
       await cargarProductos();
       resetForm();
     } catch (err) {
-      setError(err.message || 'Ocurrió un error al guardar el producto.');
+      const message = err?.message || 'Ocurrió un error al guardar el producto.';
+      if (message.toLowerCase().includes('duplicate') || message.toLowerCase().includes('sku')) {
+        setError('Ya existe un producto con ese SKU. Usa un identificador único.');
+      } else {
+        setError(message);
+      }
     } finally {
       setSaving(false);
     }
@@ -204,9 +227,8 @@ export default function Productos() {
                   name="categoriaId"
                   value={form.categoriaId}
                   onChange={handleChange}
-                  required
                 >
-                  <option value="">Seleccione una categoría</option>
+                  <option value="">Sin categoría</option>
                   {categorias.map((categoria) => (
                     <option key={categoria.id} value={categoria.id}>
                       {categoria.nombre}

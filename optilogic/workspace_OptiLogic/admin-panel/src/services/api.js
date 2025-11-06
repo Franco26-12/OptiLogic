@@ -69,6 +69,49 @@ export const obtenerDashboard = async () => {
   return manejarRespuesta(response, 'No se pudieron cargar las estadísticas.');
 };
 
+export const fetchClientes = async () => {
+  const response = await fetch(`${API_URL}/clientes`, {
+    headers: authHeaders(),
+  });
+
+  return manejarRespuesta(response, 'No se pudieron obtener los clientes.');
+};
+
+export const fetchEnvios = async () => {
+  const response = await fetch(`${API_URL}/envios`, {
+    headers: authHeaders(),
+  });
+
+  return manejarRespuesta(response, 'No se pudieron obtener los envíos.');
+};
+
+export const crearEnvio = async (envio) => {
+  const response = await fetch(`${API_URL}/envios`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(envio),
+  });
+
+  return manejarRespuesta(response, 'No se pudo crear el envío.');
+};
+
+export const obtenerRepartidoresDisponibles = async () => {
+  const response = await fetch(`${API_URL}/envios/repartidores-disponibles`, {
+    headers: authHeaders(),
+  });
+
+  return manejarRespuesta(response, 'No se pudieron obtener los repartidores disponibles.');
+};
+
+export const asignarRepartidorEnvio = async (envioId, repartidorId) => {
+  const response = await fetch(`${API_URL}/envios/${envioId}/asignar/${repartidorId}`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+
+  return manejarRespuesta(response, 'No se pudo asignar el repartidor.');
+};
+
 export const obtenerCategorias = async () => {
   const response = await fetch(`${API_URL}/admin/categorias`, {
     headers: authHeaders(),

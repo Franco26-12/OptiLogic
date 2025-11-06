@@ -1,5 +1,6 @@
 package com.franco.optilogic.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -33,6 +34,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false) // 🚨 Password es obligatorio
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.franco.optilogic.Entity.Envio;
+import com.franco.optilogic.Entity.Repartidor;
 import com.franco.optilogic.Services.EnvioService;
 
 import java.util.HashMap;
@@ -58,6 +59,13 @@ public class EnvioController {
     public ResponseEntity<List<Envio>> obtenerEnviosPendientes() {
         List<Envio> enviosPendientes = envioService.obtenerEnviosPendientes();
         return ResponseEntity.ok(enviosPendientes);
+    }
+
+    @GetMapping("/repartidores-disponibles")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Repartidor>> obtenerRepartidoresDisponibles() {
+        List<Repartidor> repartidores = envioService.obtenerRepartidoresDisponibles();
+        return ResponseEntity.ok(repartidores);
     }
     
     @GetMapping("/repartidor/{repartidorId}")

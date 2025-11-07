@@ -1,6 +1,6 @@
 package com.franco.optilogic.Entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -19,8 +19,8 @@ public class Categoria {
     
     private String descripcion;
     
-    @JsonManagedReference
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("categoria")
     private List<Producto> productos;
 
     public Long getId() {

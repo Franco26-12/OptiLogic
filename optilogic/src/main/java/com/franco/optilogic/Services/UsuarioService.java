@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -45,6 +46,10 @@ public class UsuarioService {
 
     public List<Usuario> obtenerTodosLosUsuarios() {
         return usuarioRepository.findAll();
+    }
+
+    public Optional<Usuario> obtenerPorCedula(String cedula) {
+        return usuarioRepository.findByCedula(cedula);
     }
 
     public Usuario crearUsuario(GestionUsuarioDTO dto) {

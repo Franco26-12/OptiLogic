@@ -27,6 +27,7 @@ export default function Productos() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [categoriaAnteriorNombre, setCategoriaAnteriorNombre] = useState(null);
 
   const cargarProductos = async () => {
     setError(null);
@@ -76,6 +77,7 @@ export default function Productos() {
     setForm(initialFormState);
     setSaving(false);
     localStorage.removeItem(FORM_STORAGE_KEY);
+    setCategoriaAnteriorNombre(null);
   };
 
   const handleChange = (e) => {
@@ -84,6 +86,15 @@ export default function Productos() {
       ...prev,
       [name]: value,
     }));
+
+    if (name === 'categoriaId') {
+      const categoriaSeleccionada = categorias.find(
+        (categoria) => String(categoria.id) === value
+      );
+      setCategoriaAnteriorNombre(
+        categoriaSeleccionada ? categoriaSeleccionada.nombre : 'Sin categoría'
+      );
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -136,6 +147,9 @@ export default function Productos() {
       stockMinimo: producto.stockMinimo ?? 0,
       categoriaId: producto.categoria ? producto.categoria.id : '',
     });
+    setCategoriaAnteriorNombre(
+      producto.categoria ? producto.categoria.nombre : 'Sin categoría'
+    );
   };
 
   const handleDelete = async (id) => {
@@ -223,6 +237,12 @@ export default function Productos() {
               </label>
               <label className="full-width">
                 Categoría
+                {form.id && (
+                  <span className="helper-text">
+                    Categoría actual:{' '}
+                    <strong>{categoriaAnteriorNombre || 'Sin categoría'}</strong>
+                  </span>
+                )}
                 <select
                   name="categoriaId"
                   value={form.categoriaId}

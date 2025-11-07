@@ -4,7 +4,8 @@ import { login } from '../services';
 import '../App.css';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [cedula, setCedula] = useState('');
+  const [nombre, setNombre] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -13,10 +14,11 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      const data = await login(email, password);
+      const data = await login(cedula, nombre, password);
       localStorage.setItem('token', data.accessToken);
-      console.log(data);
-      navigate('/dashboard'); 
+      localStorage.setItem('nombreUsuario', data.nombre);
+      navigate('/dashboard');
+      alert(`Bienvenido ${data.nombre}`);
     } catch (err) {
       setError(err.message);
     }
@@ -27,12 +29,21 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="login-form"> 
         <h2>Iniciar Sesión</h2>
         
-        <label>Email:</label>
+        <label>Cédula:</label>
         <input
-          type="email"
-          placeholder="Correo Electrónico"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          type="text"
+          placeholder="Número de cédula"
+          value={cedula}
+          onChange={e => setCedula(e.target.value)}
+          required
+        />
+
+        <label>Nombre:</label>
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={e => setNombre(e.target.value)}
           required
         />
 

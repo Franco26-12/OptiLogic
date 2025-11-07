@@ -1,6 +1,6 @@
 package com.franco.optilogic.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class Producto {
     @Column(nullable = false)
     private Integer stockMinimo = 0;
     
-    @JsonBackReference
+    @JsonIgnoreProperties({"productos"})
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;

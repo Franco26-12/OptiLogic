@@ -4,6 +4,7 @@
     min-height: 100vh;
     background-color: #f4f7f9;
     color: #333;
+    transition: margin-left 0.3s ease;
 }
 
 /* --- Estilos para el Contenido Principal --- */
@@ -11,21 +12,42 @@
     flex: 1;
     padding: 24px 40px;
     overflow-y: auto;
+    transition: margin-left 0.3s ease, padding 0.3s ease;
+}
+
+.dashboard-layout.sidebar-open .main-content {
+    margin-left: 0;
+}
+
+.dashboard-layout.sidebar-collapsed .main-content {
+    margin-left: 0;
+}
+
+@media (min-width: 992px) {
+    .dashboard-layout.sidebar-open .main-content {
+        margin-left: 260px;
+    }
+
+    .dashboard-layout.sidebar-collapsed .main-content {
+        margin-left: 84px;
+    }
 }
 
 /* --- Estilos para el Encabezado Principal --- */
 .main-header {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: linear-gradient(135deg, #4a90e2, #6f8ff5);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 20 15px 40px rgba(79, 114, 205, 0.25);
     margin-bottom: 30px;
+    color: #ffffff;
 }
 
 .main-header h1 {
     margin: 0;
-    font-size: 1.8em;
-    color: #0056b3;
+    font-size: 1.9em;
+    color: #ffffff;
+    letter-spacing: 0.4px;
 }
 
 .header-content {
@@ -71,7 +93,7 @@
 }
 
 .stat-card .warning {
-    color: #c0392b;
+    color: #ff1803;
     font-weight: 600;
 }
 
@@ -79,7 +101,7 @@
     margin: 0;
     padding: 12px 16px;
     border-radius: 8px;
-    background-color: rgba(231, 76, 60, 0.15);
+    background-color: rgba(238, 38, 15, 0.15);
     color: #c0392b;
     font-weight: 500;
 }
@@ -124,7 +146,7 @@
     border-radius: 8px;
     border: 1px solid #d5d9de;
     background-color: #fdfdff;
-    font-size: 0.95em;
+    font-size: 0.80em;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -140,6 +162,79 @@
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+}
+
+.product-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.product-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 26px;
+    padding: 14px 16px;
+    border: 1px solid #d5d9de;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f7f9fc 0%, #ffffff 100%);
+    box-shadow: 0 6px 16px rgba(28, 54, 90, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(28, 54, 90, 0.12);
+}
+
+.product-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.product-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-card-name {
+    font-weight: 600;
+    color: #1a2a4a;
+    font-size: 1.05em;
+}
+
+.product-card-sku {
+    font-size: 0.9em;
+    color: #4a90e2;
+    font-weight: 500;
+}
+
+.product-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.85em;
+    color: #5d6d7e;
+}
+
+.product-card-category {
+    background-color: rgba(74, 144, 226, 0.12);
+    color: #2c3e50;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.product-card input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4a90e2;
+    margin: 0;
 }
 
 .form-actions button {
@@ -158,7 +253,7 @@ button.danger {
 }
 
 button.primary {
-    background: linear-gradient(135deg, #4a90e2, #357ab8);
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.95), rgba(53, 122, 184, 0.95));
     color: #fff;
 }
 
@@ -236,7 +331,7 @@ button.danger:disabled {
 
 .modal-content {
     background: #ffffff;
-    color: #1f2937;
+    color: #1567da;
     width: min(960px, 100%);
     border-radius: 16px;
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
@@ -302,7 +397,7 @@ button.danger:disabled {
 
 /* --- Sidebar del administrador --- */
 .sidebar {
-    width: 260px;
+    width: 200px;
     background-color: #333d47;
     color: white;
     min-height: 100vh;
@@ -313,7 +408,7 @@ button.danger:disabled {
 }
 
 .sidebar-header {
-    padding: 24px 20px;
+    padding: 20px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -357,7 +452,7 @@ button.danger:disabled {
     padding: 10px 0;
     border: none;
     border-radius: 6px;
-    background-color: #e74c3c;
+    background-color: #dd2e1a;
     color: white;
     cursor: pointer;
     font-weight: 600;
@@ -365,5 +460,5 @@ button.danger:disabled {
 }
 
 .logout-button:hover {
-    background-color: #c0392b;
+    background-color: #e02a16;
 }

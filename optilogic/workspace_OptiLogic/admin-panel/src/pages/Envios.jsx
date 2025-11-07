@@ -23,6 +23,8 @@ export default function Envios() {
   const [repartidores, setRepartidores] = useState([]);
   const [form, setForm] = useState(initialFormState);
   const [assignSelection, setAssignSelection] = useState({});
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [productoBuscado, setProductoBuscado] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [assigning, setAssigning] = useState(false);
@@ -70,9 +72,52 @@ export default function Envios() {
     fetchData();
   }, []);
 
+  const categoriasDisponibles = useMemo(() => {
+    const map = new Map();
+
+    productos.forEach((producto) => {
+      const key = producto.categoria ? String(producto.categoria.id) : '__sin_categoria';
+      if (!map.has(key)) {
+        map.set(key, {
+          value: key,
+          id: producto.categoria ? producto.categoria.id : null,
+          nombre: producto.categoria ? producto.categoria.nombre : 'Sin categoría',
+        });
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.nombre.localeCompare(b.nombre));
+  }, [productos]);
+
+  const productosFiltrados = useMemo(() => {
+    if (!categoriaSeleccionada) return [];
+
+    const texto = productoBuscado.trim().toLowerCase();
+
+    const productosPorCategoria = categoriaSeleccionada === '__sin_categoria'
+      ? productos.filter((producto) => !producto.categoria)
+      : productos.filter(
+          (producto) =>
+            producto.categoria && String(producto.categoria.id) === categoriaSeleccionada
+        );
+
+    if (!texto) {
+      return productosPorCategoria;
+    }
+
+    return productosPorCategoria.filter((producto) => {
+      const nombre = producto.nombre?.toLowerCase() || '';
+      const sku = producto.sku?.toLowerCase() || '';
+      const idTexto = String(producto.id);
+      return nombre.includes(texto) || sku.includes(texto) || idTexto.includes(texto);
+    });
+  }, [categoriaSeleccionada, productoBuscado, productos]);
+
   const resetForm = () => {
     setForm(initialFormState);
     setSaving(false);
+    setCategoriaSeleccionada('');
+    setProductoBuscado('');
   };
 
   const handleInputChange = (event) => {
@@ -93,6 +138,15 @@ export default function Envios() {
           : [...prev.productoIds, productoId],
       };
     });
+  };
+
+  const handleCategoriaSeleccionChange = (event) => {
+    setCategoriaSeleccionada(event.target.value);
+    setProductoBuscado('');
+  };
+
+  const handleProductoBuscadoChange = (event) => {
+    setProductoBuscado(event.target.value);
   };
 
   const handleSubmit = async (event) => {
@@ -219,20 +273,64 @@ export default function Envios() {
                 {productos.length === 0 ? (
                   <p>No hay productos disponibles.</p>
                 ) : (
-                  <div className="checkbox-grid">
-                    {productos.map((producto) => (
-                      <label key={producto.id} className="checkbox-item">
+                  <>
+                    <label className="full-width">
+                      Categoría
+                      <select
+                        value={categoriaSeleccionada}
+                        onChange={handleCategoriaSeleccionChange}
+                      >
+                        <option value="">Selecciona una categoría</option>
+                        {categoriasDisponibles.map((categoria) => (
+                          <option key={categoria.value} value={categoria.value}>
+                            {categoria.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    {categoriaSeleccionada && (
+                      <label className="full-width">
+                        Buscar producto
                         <input
-                          type="checkbox"
-                          checked={form.productoIds.includes(producto.id)}
-                          onChange={() => handleProductoToggle(producto.id)}
+                          type="text"
+                          value={productoBuscado}
+                          onChange={handleProductoBuscadoChange}
+                          placeholder="Filtra por nombre, SKU o ID"
                         />
-                        <span>
-                          {producto.nombre} (SKU: {producto.sku})
-                        </span>
                       </label>
-                    ))}
-                  </div>
+                    )}
+                    {categoriaSeleccionada === '' ? (
+                      <p>Selecciona una categoría para ver sus productos.</p>
+                    ) : productosFiltrados.length === 0 ? (
+                      <p>No hay productos disponibles en esta categoría.</p>
+                    ) : (
+                      <div className="product-card-grid">
+                        {productosFiltrados.map((producto) => (
+                          <label key={producto.id} className="product-card">
+                            <div className="product-card-content">
+                              <div className="product-card-header">
+                                <span className="product-card-name">{producto.nombre}</span>
+                                <span className="product-card-sku">SKU: {producto.sku}</span>
+                              </div>
+                              <div className="product-card-meta">
+                                <span>ID: {producto.id}</span>
+                                {producto.categoria && (
+                                  <span className="product-card-category">
+                                    {producto.categoria.nombre}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <input
+                              type="checkbox"
+                              checked={form.productoIds.includes(producto.id)}
+                              onChange={() => handleProductoToggle(producto.id)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </fieldset>
             </div>

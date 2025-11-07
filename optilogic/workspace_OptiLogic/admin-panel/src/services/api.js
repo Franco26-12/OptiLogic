@@ -39,11 +39,11 @@ export const fetchProductos = async () => {
   return manejarRespuesta(response, 'No se pudieron obtener los productos.');
 };
 
-export const login = async (email, password) => {
+export const login = async (cedula, nombre, password) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ cedula, nombre, password }),
   });
 
   if (!response.ok) {

@@ -15,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException; // Para manejar 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,16 +44,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponseDTO> login(@RequestBody LoginDto loginDto) {
 
+        Usuario usuario = usuarioService.obtenerPorCedula(loginDto.getCedula())
+                .orElseThrow(() -> new BadCredentialsException("Credenciales inválidas"));
+
+        if (!usuario.getNombre().equalsIgnoreCase(loginDto.getNombre())) {
+            throw new BadCredentialsException("Credenciales inválidas");
+        }
+
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                loginDto.getEmail(),
+                usuario.getEmail(),
                 loginDto.getPassword()
             )
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-       
         String role = authentication.getAuthorities().stream()
                         .findFirst() 
                         .map(a -> a.getAuthority())
@@ -60,7 +67,7 @@ public class AuthController {
 
         String token = tokenProvider.generateToken(authentication, role);
 
-        return ResponseEntity.ok(new JwtAuthResponseDTO(token, role));
+        return ResponseEntity.ok(new JwtAuthResponseDTO(token, role, usuario.getNombre()));
     }
     
     @PostMapping("/register")

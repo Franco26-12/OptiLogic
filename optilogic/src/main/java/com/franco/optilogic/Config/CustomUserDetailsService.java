@@ -1,38 +1,29 @@
 package com.franco.optilogic.Config;
 
-import com.franco.optilogic.Entity.Admin;
-import com.franco.optilogic.Repository.AdminRepository;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import com.franco.optilogic.Entity.Usuario;
+import com.franco.optilogic.Repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Set;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final AdminRepository adminRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public CustomUserDetailsService(AdminRepository adminRepository) {
-        this.adminRepository = adminRepository;
+    public CustomUserDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     // Método principal: Carga los datos del usuario por email
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Buscar el Admin por email
-        Admin admin = adminRepository.findByEmail(email)
+        // Buscar el usuario (sin importar su rol) por email
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
-        
-        // Crear las autoridades (roles)
-        Set<GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + admin.getRol()));
-        
-        // Retornar el objeto UserDetails que Spring Security necesita
-        return new User(admin.getEmail(), admin.getPassword(), authorities);
+
+        // Retornar implementación personalizada que expone credenciales y rol
+        return new CustomUserDetails(usuario);
     }
 }

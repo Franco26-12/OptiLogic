@@ -7,6 +7,10 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [modalUsuariosAbierto, setModalUsuariosAbierto] = useState(false);
+    const [nombreUsuario, setNombreUsuario] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        return localStorage.getItem('nombreUsuario') || '';
+    });
 
     useEffect(() => {
         const cargarEstadisticas = async () => {
@@ -27,7 +31,12 @@ export default function Dashboard() {
         <>
             <header className="main-header">
                 <div className="header-content">
-                    <h1>Panel de Administración de OptiLogic</h1>
+                    <div className="header-text">
+                        <h1>Panel de Administración de OptiLogic</h1>
+                        {nombreUsuario && (
+                            <p className="welcome-message">Bienvenido, {nombreUsuario}</p>
+                        )}
+                    </div>
                     <button
                         type="button"
                         className="primary"

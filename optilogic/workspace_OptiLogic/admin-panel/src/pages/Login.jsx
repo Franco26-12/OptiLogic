@@ -18,7 +18,6 @@ export default function Login() {
       localStorage.setItem('token', data.accessToken);
       localStorage.setItem('nombreUsuario', data.nombre);
       navigate('/dashboard');
-      alert(`Bienvenido ${data.nombre}`);
     } catch (err) {
       setError(err.message);
     }

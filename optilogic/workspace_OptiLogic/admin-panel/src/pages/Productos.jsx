@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   fetchProductos,
   obtenerCategorias,
@@ -28,6 +28,7 @@ export default function Productos() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [categoriaAnteriorNombre, setCategoriaAnteriorNombre] = useState(null);
+  const [categoriaBusqueda, setCategoriaBusqueda] = useState('');
 
   const cargarProductos = async () => {
     setError(null);
@@ -78,6 +79,7 @@ export default function Productos() {
     setSaving(false);
     localStorage.removeItem(FORM_STORAGE_KEY);
     setCategoriaAnteriorNombre(null);
+    setCategoriaBusqueda('');
   };
 
   const handleChange = (e) => {
@@ -150,7 +152,36 @@ export default function Productos() {
     setCategoriaAnteriorNombre(
       producto.categoria ? producto.categoria.nombre : 'Sin categoría'
     );
+    setCategoriaBusqueda(producto.categoria ? producto.categoria.nombre : '');
   };
+
+  const categoriasFiltradas = useMemo(() => {
+    if (!categoriaBusqueda.trim()) {
+      return categorias;
+    }
+
+    const termino = categoriaBusqueda.trim().toLowerCase();
+    const filtradas = categorias.filter((categoria) =>
+      categoria.nombre?.toLowerCase().includes(termino)
+    );
+
+    if (!form.categoriaId) {
+      return filtradas;
+    }
+
+    const categoriaSeleccionada = categorias.find(
+      (categoria) => String(categoria.id) === String(form.categoriaId)
+    );
+
+    if (
+      categoriaSeleccionada &&
+      !filtradas.some((categoria) => categoria.id === categoriaSeleccionada.id)
+    ) {
+      return [categoriaSeleccionada, ...filtradas];
+    }
+
+    return filtradas;
+  }, [categoriaBusqueda, categorias, form.categoriaId]);
 
   const handleDelete = async (id) => {
     const confirmar = window.confirm('¿Seguro que deseas eliminar este producto?');
@@ -243,13 +274,20 @@ export default function Productos() {
                     <strong>{categoriaAnteriorNombre || 'Sin categoría'}</strong>
                   </span>
                 )}
+                <input
+                  type="text"
+                  className="category-search"
+                  placeholder="Buscar categoría..."
+                  value={categoriaBusqueda}
+                  onChange={(event) => setCategoriaBusqueda(event.target.value)}
+                />
                 <select
                   name="categoriaId"
                   value={form.categoriaId}
                   onChange={handleChange}
                 >
                   <option value="">Sin categoría</option>
-                  {categorias.map((categoria) => (
+                  {categoriasFiltradas.map((categoria) => (
                     <option key={categoria.id} value={categoria.id}>
                       {categoria.nombre}
                     </option>

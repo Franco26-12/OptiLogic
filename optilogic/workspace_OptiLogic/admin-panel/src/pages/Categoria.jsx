@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   obtenerCategorias,
   crearCategoria,
@@ -19,6 +19,8 @@ export default function Categoria() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [orden, setOrden] = useState('nombre-asc');
+  const [busquedaNombre, setBusquedaNombre] = useState('');
 
   const cargarCategorias = async () => {
     setError(null);
@@ -39,6 +41,31 @@ export default function Categoria() {
 
     fetchData();
   }, []);
+
+  const categoriasFiltradas = useMemo(() => {
+    const termino = busquedaNombre.trim().toLowerCase();
+
+    const filtradas = termino
+      ? categorias.filter((categoria) =>
+          (categoria.nombre || '').toLowerCase().includes(termino)
+        )
+      : categorias;
+
+    const copia = [...filtradas];
+
+    switch (orden) {
+      case 'nombre-asc':
+        return copia.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', 'es', { sensitivity: 'base' }));
+      case 'nombre-desc':
+        return copia.sort((a, b) => (b.nombre || '').localeCompare(a.nombre || '', 'es', { sensitivity: 'base' }));
+      case 'creacion-reciente':
+        return copia.sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+      case 'creacion-antigua':
+        return copia.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+      default:
+        return copia;
+    }
+  }, [busquedaNombre, categorias, orden]);
 
   const resetForm = () => {
     setForm(initialFormState);
@@ -164,10 +191,37 @@ export default function Categoria() {
 
         <article className="stat-card">
           <h2>Listado de categorías</h2>
+          <div className="table-controls">
+            <label htmlFor="orden-categorias" className="table-control">
+              Ordenar por
+              <select
+                id="orden-categorias"
+                value={orden}
+                onChange={(event) => setOrden(event.target.value)}
+              >
+                <option value="nombre-asc">Nombre (A-Z)</option>
+                <option value="nombre-desc">Nombre (Z-A)</option>
+                <option value="creacion-reciente">Creación (más recientes)</option>
+                <option value="creacion-antigua">Creación (más antiguas)</option>
+              </select>
+            </label>
+            <label htmlFor="busqueda-categorias" className="table-control">
+              Buscar
+              <input
+                id="busqueda-categorias"
+                type="text"
+                value={busquedaNombre}
+                placeholder="Escribe para filtrar..."
+                onChange={(event) => setBusquedaNombre(event.target.value)}
+              />
+            </label>
+          </div>
           {loading ? (
             <p>Cargando categorías...</p>
           ) : categorias.length === 0 ? (
             <p>No hay categorías registradas.</p>
+          ) : categoriasFiltradas.length === 0 ? (
+            <p>No se encontraron categorías que coincidan con la búsqueda.</p>
           ) : (
             <div className="table-responsive">
               <table className="products-table">
@@ -180,7 +234,7 @@ export default function Categoria() {
                   </tr>
                 </thead>
                 <tbody>
-                  {categorias.map((categoria) => (
+                  {categoriasFiltradas.map((categoria) => (
                     <tr key={categoria.id}>
                       <td>{categoria.nombre}</td>
                       <td>{categoria.descripcion || 'Sin descripción'}</td>

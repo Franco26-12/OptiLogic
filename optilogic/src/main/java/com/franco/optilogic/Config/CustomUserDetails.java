@@ -18,8 +18,16 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
+            return Collections.emptyList();
+        }
+
+        String role = usuario.getRol().startsWith("ROLE_")
+                ? usuario.getRol()
+                : "ROLE_" + usuario.getRol();
+
         // Usar Collections.singletonList para evitar problema con List.of
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()));
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
     @Override
